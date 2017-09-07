@@ -15,7 +15,7 @@ namespace GoogleTranslate
     {
         static async Task Main(string[] args)
         {
-            Dictionary<string, string> keyValue = new Dictionary<string, string>();
+             Dictionary<string, string> keyValue = new Dictionary<string, string>();
 
             var service = new TranslateService(new BaseClientService.Initializer()
             {
@@ -25,14 +25,20 @@ namespace GoogleTranslate
 
             string json = @"{""Name"":""Mahesh"",""LastName"":""B"",""Gender"":""Male"",""Sample"":""Test""}";
 
+            //Deserialize the JSON string to Disctionary, as Google translate API requires IEnumerable<string> as input
             keyValue = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             
+            //Call google API for Translation
             var response = await service.Translations.List(keyValue.Values.ToArray<string>(), "fr").ExecuteAsync();
 
             for (int i = 0; i < response.Translations.Count; i++)
             {
+                //Get specific key at element and replace the translated text
                 keyValue[keyValue.Keys.ElementAt(i)] = response.Translations[i].TranslatedText;
             }
+
+            //Serialize key value pair back to JSON 
+            var outputJsonResult = JsonConvert.SerializeObject(keyValue);
         }
     }
 }
